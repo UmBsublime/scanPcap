@@ -6,6 +6,7 @@ import sys
 import os
 
 import analyzeHttp as http
+import analyzeDns as dns
 
 from math import trunc
 
@@ -49,6 +50,7 @@ class scan():
 
         # plug-in httpAnalyze
         self.http = http.analyzeHttp(self.tcpPacketList)
+        self.dns = dns.analyzeDns(self.ethPacketList)
 
 
     def setCounters(self):
@@ -58,6 +60,7 @@ class scan():
 
             # Parse ethernet packet
             eth=dpkt.ethernet.Ethernet(pkt)
+            self.ethPacketList.append(eth)
             ip=eth.data
 
             #check if IP packet or non-ip packet

@@ -45,6 +45,7 @@ def main():
         print('3. Print HTTP Requests')
         print('4. Print Connections')
         print('5. Subnets')
+        print('6. Subnets')
 
         choice = 0
         choice = int(input())
@@ -66,6 +67,11 @@ def main():
         elif choice is 5:
             testAnal.printSubnets()
             raw_input('Press any key to continue')
+        elif choice is 6:
+            testAnal.dns.analyze()
+            raw_input('Press any key to continue')
+
+
 
 
 
