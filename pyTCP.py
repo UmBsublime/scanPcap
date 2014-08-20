@@ -35,7 +35,7 @@ def main():
     testAnal = scan.scan(options.filename)
     #testAnal.basicAnalysis()
     while True:
-        os.system('clear')
+        #os.system('clear')
         print('|{:-<19}'.format(''))
         print('| {:<17}|'.format('scan.py'))
         print('| File: {:<.11s}|'.format(options.filename))
@@ -45,10 +45,16 @@ def main():
         print('3. Print HTTP Requests')
         print('4. Print Connections')
         print('5. Subnets')
-        print('6. Subnets')
+        print('6. DNS')
+        print('^C quit')
+
+
 
         choice = 0
-        choice = int(input())
+        choice = input('\nChoice: ')
+        if choice is 'q' or choice is 'Q':
+            break
+
         if choice is 1:
 
 
@@ -60,10 +66,10 @@ def main():
             raw_input('Press any key to continue')
         elif choice is 3:
             testAnal.http.printHttpRequests(vv=True)
-            raw_input('Press any key to continue')
+            #raw_input('Press any key to continue')
         elif choice is 4:
             testAnal.printConnections(v=True)
-            raw_input('Press any key to continue')
+            #raw_input('Press any key to continue')
         elif choice is 5:
             testAnal.printSubnets()
             raw_input('Press any key to continue')
