@@ -174,6 +174,7 @@ class scan():
     def printTotals(self):
         # Print packet totals
         print("|{:-<37}|".format(''))
+
         print("| Ethernet             {:>5.0f}  {:>6.2f}% |".format(self.counter, self.getPercentage(self.counter)))
         print("|     IP               {:>5.0f}  {:>6.2f}% |".format(self.ipcounter, self.getPercentage(self.ipcounter)))
         print("|         TCP          {:>5.0f}  {:>6.2f}% |".format(self.tcpcounter, self.getPercentage(self.smtpcounter)))
@@ -210,6 +211,7 @@ class scan():
 
     def printPacketPercentage(self):
         # Print packet percentage
+
         print("ARP     {:>5.0f}  {:>6.2f}%".format(self.arpcounter, self.getPercentage(self.arpcounter)))
         print("HTTP    {:>5.0f}  {:>6.2f}%".format(self.httpcounter, self.getPercentage(self.httpcounter)))
         print("HTTPS   {:>5.0f}  {:>6.2f}%".format(self.httpscounter, self.getPercentage(self.httpscounter)))
@@ -226,11 +228,12 @@ class scan():
         print("total   {:>5.0f}  {:>6.2f}%".format(self.counter, self.getPercentage(self.counter)))
         print("--------------------------------------------------------------")
 
+
     def printSubnets(self):
         # Print addresses
-        print "Address \t \t Occurences"
+        print ("Address \t \t Occurences")
         for key, value in sorted(self.subnets.iteritems(), key=lambda t: int(t[0].split(".")[0])):
-            print "%s/16 \t = \t %s" %(key, value)
+            print ("%s/16 \t = \t %s" %(key, value))
 
 
     def getPercentage(self, number):
