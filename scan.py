@@ -35,15 +35,12 @@ class scan():
         self.icmpcounter=0.0
         self.ipv6counter=0.0
 
-
         self.ethPacketList = []
         self.ipPacketList = []
         self.tcpPacketList = []
         self.udpPacketList = []
 
-        # Subnet Dictionary
         self.subnets = {}
-
 
         # initialize counters
         self.setCounters()
@@ -51,7 +48,6 @@ class scan():
         # plug-in analyzers
         self.http = http.analyzeHttp(self.tcpPacketList)
         self.dns = dns.analyzeDns(self.ethPacketList)
-
 
     def setCounters(self):
         # Packet processing loop

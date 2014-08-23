@@ -32,7 +32,7 @@ def main():
 
     setArgs()
 
-    testAnal = scan.scan(options.filename)
+    test = scan.scan(options.filename)
     #testAnal.basicAnalysis()
     while True:
         #os.system('clear')
@@ -48,34 +48,25 @@ def main():
         print('6. DNS')
         print('^C quit')
 
-
-
-        choice = 0
         choice = input('\nChoice: ')
         if choice is 'q' or choice is 'Q':
             break
 
         if choice is 1:
-
-
-            testAnal.printTotals()
-            testAnal.printPacketPercentage()
+            test.printTotals()
+            test.printPacketPercentage()
             raw_input('Press any key to continue')
         elif choice is 2:
-            testAnal.http.printUrls()
-            raw_input('Press any key to continue')
+            test.http.printUrls()
         elif choice is 3:
-            testAnal.http.printHttpRequests(vv=True)
-            #raw_input('Press any key to continue')
+            test.http.printHttpRequests(vv=True)
         elif choice is 4:
-            testAnal.printConnections(v=True)
-            #raw_input('Press any key to continue')
+            test.printConnections(v=True)
         elif choice is 5:
-            testAnal.printSubnets()
+            test.printSubnets()
             raw_input('Press any key to continue')
         elif choice is 6:
-            testAnal.dns.analyze()
-            raw_input('Press any key to continue')
+            test.dns.analyze()
 
 
 

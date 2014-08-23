@@ -1,5 +1,6 @@
 import dpkt
 import socket
+import os
 
 class analyzeDns():
 
@@ -10,27 +11,23 @@ class analyzeDns():
 
 
     def analyze(self):
-
+        tempFile = '.dns.tmp'
         for eth in self.ethList:
-
+            c = ''
             if eth.type != 2048:
                 continue
-
             try:
                 ip = eth.data
             except:
                 continue
             if ip.p != 17:
                 continue
-
             try:
                 udp = ip.data
             except:
                 continue
-
             if udp.sport != 53 and udp.dport != 53:
                 continue
-
             try:
                 dns = dpkt.dns.DNS(udp.data)
             except:
@@ -38,28 +35,50 @@ class analyzeDns():
 
 
 
-            if dns.qr == dpkt.dns.DNS_Q:
+            c = self.formatDns(dns)
 
-                #query
-                try:
-                    print('Q')
-                    for qname in dns.qd:
-                        print(qname.name)
-                except:
-                    continue
 
-            elif dns.qr == dpkt.dns.DNS_R:
-                #reply
+            with open(tempFile,'a') as f:
+                f.writelines(c)
 
-                try:
-                    print('R')
-                    for answer in dns.an:
-                        if answer.type == 1:  # DNS_A
-                            print("A RECORD")
-                            print("Domain Name: {}\nIP Address: {}".format(answer.name, socket.inet_ntoa(answer.rdata)))
-                except:
-                    continue
+
+        os.system("less {}".format(tempFile))
+        os.system('rm {}'.format(tempFile))
 
 
 
+    def formatDns(self, dns):
+        c =''
 
+        if dns.qr == dpkt.dns.DNS_Q:
+            #query
+            try:
+                c += '|{:->12}|\n'.format('')
+                c += '| Query      {}|\n'.format('')
+                c += '|{:->50}|\n'.format('')
+                for qname in dns.qd:
+                    c += '| Name:        {:<36}|\n'.format(qname.name)
+            except:
+                pass
+                #continue
+        elif dns.qr == dpkt.dns.DNS_R:
+            #reply
+            try:
+                c += '|{:->12}|\n'.format('')
+                c += '| Response   {}|\n'.format('')
+                c += '|{:->50}|\n'.format('')
+                for answer in dns.an:
+                    if answer.type == 1:  # DNS_A
+                        if answer.name not in c:
+                            c += "| A RECORD     {:<36}|\n".format('')
+                            c += "| Domain Name: {:<36}|\n".format(answer.name)
+                        c += "| IP Address:  {:<36}|\n".format(socket.inet_ntoa(answer.rdata))
+            except:
+                pass
+                #continue
+        # remove empty responses
+        if '---|' in c[-10:]:
+            return ''
+        c += '|{:->50}|\n\n'.format('')
+
+        return c
