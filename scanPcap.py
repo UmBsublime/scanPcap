@@ -1,13 +1,13 @@
 #!/usr/bin/env python
 
 import os
-#import packetAnalize
+import analyze
 
 
 from optparse import OptionParser
 
 
-import scan
+#import scan
 
 def setArgs():
     global options
@@ -17,23 +17,63 @@ def setArgs():
     parser.add_option("-q", "--quiet",
                       action="store_false", dest="verbose", default=True,
                       help="don't print status messages to stdout")
+    parser.add_option("-u", "--url",
+                      action="store_true", dest="pUrl", default=False,
+                      help="shows url requests")
+    parser.add_option("-c", "--conn",
+                      action="store_true", dest="pConn", default=False,
+                      help="shows ip connections")
+    parser.add_option("-t", "--http",
+                      action="store_true", dest="pHttp", default=False,
+                      help="shows http requests")
+    parser.add_option("-s", "--stats",
+                      action="store_true", dest="pStats", default=False,
+                      help="print statistics")
+    parser.add_option("-d", "--dns",
+                      action="store_true", dest="pDns", default=False,
+                      help="print dns requests/responses")
 
     (options, args) = parser.parse_args()
     print("\nDEBUG: {}\n".format(str(options)))
 
-    print('\n--> ANALIZING CAPTURE . . .\n')
+
 
     if options.filename is None:
-        (options, args) = parser.parse_args(["-h"]) 
+        (options, args) = parser.parse_args(["-h"])
+
+    return options
+
 
 
 
 def main():
 
-    setArgs()
+    args = setArgs()
+    commandLine = False
+    print('\n--> ANALYZING CAPTURE . . .\n')
 
-    test = scan.scan(options.filename)
-    #testAnal.basicAnalysis()
+    test = analyze.scan(options.filename)
+
+    if args.pUrl:
+        test.http.printUrls()
+        commandLine = True
+    if args.pHttp:
+        test.http.printHttpRequests(vv=True)
+        commandLine = True
+    if args.pDns:
+        test.dns.analyze()
+        commandLine = True
+    if args.pStats:
+        test.printTotals()
+        commandLine = True
+    if args.pConn:
+        test.printConnections(v=True)
+        commandLine = True
+
+    if commandLine:
+        return 0
+
+
     while True:
         #os.system('clear')
         print('|{:-<19}'.format(''))
@@ -67,12 +107,6 @@ def main():
             raw_input('Press any key to continue')
         elif choice is 6:
             test.dns.analyze()
-
-
-
-
-
-
 
 if __name__ == '__main__':
     main()

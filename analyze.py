@@ -16,24 +16,27 @@ class scan():
 
         self.filename = filename
 
-        self.counter=0.0
-        self.ipcounter=0.0
-        self.nonipcounter=0.0
-        self.tcpcounter=0.0
-        self.udpcounter=0.0
-        self.arpcounter=0.0
-        self.httpcounter=0.0
-        self.httpscounter=0.0
-        self.smtpcounter=0.0
-        self.dhcpcounter=0.0
-        self.ftpcounter=0.0
-        self.sshcounter=0.0
-        self.ntpcounter=0.0
-        self.telnetcounter=0.0
-        self.whoiscounter=0.0
-        self.rsynccounter=0.0
-        self.icmpcounter=0.0
-        self.ipv6counter=0.0
+        self.timeStart = 0
+        self.timeEnd = 0
+
+        self.counter=0
+        self.ipcounter=0
+        self.nonipcounter=0
+        self.tcpcounter=0
+        self.udpcounter=0
+        self.arpcounter=0
+        self.httpcounter=0
+        self.httpscounter=0
+        self.smtpcounter=0
+        self.dhcpcounter=0
+        self.ftpcounter=0
+        self.sshcounter=0
+        self.ntpcounter=0
+        self.telnetcounter=0
+        self.whoiscounter=0
+        self.rsynccounter=0
+        self.icmpcounter=0
+        self.ipv6counter=0
 
         self.ethPacketList = []
         self.ipPacketList = []
@@ -51,8 +54,21 @@ class scan():
 
     def setCounters(self):
         # Packet processing loop
-        for ts,pkt in dpkt.pcap.Reader(open(self.filename,'rb')):
+        capture = dpkt.pcap.Reader(open(self.filename,'rb'))
+        #maxPacket = len(capture[0]-1)
+        #self.timeStart = capture[ts][1]
+        #self.timeEnd = capture[0][-1]
+        tsCounter = 0
+        for ts in capture:
+            tsCounter += 1
+        for ts,pkt in capture:
             self.counter+=1
+            if self.counter == (tsCounter - 1):
+                self.timeEnd = ts
+            if self.counter == 1:
+                self.timeStart = ts
+
+            #print ts
 
             # Parse ethernet packet
             eth=dpkt.ethernet.Ethernet(pkt)
@@ -169,27 +185,31 @@ class scan():
 
     def printTotals(self):
         # Print packet totals
-        print("|{:-<37}|".format(''))
+        print("|{:-<30}|".format(''))
+        print self.timeStart
+        print self.timeEnd
 
-        print("| Ethernet             {:>5.0f}  {:>6.2f}% |".format(self.counter, self.getPercentage(self.counter)))
-        print("|     IP               {:>5.0f}  {:>6.2f}% |".format(self.ipcounter, self.getPercentage(self.ipcounter)))
-        print("|         TCP          {:>5.0f}  {:>6.2f}% |".format(self.tcpcounter, self.getPercentage(self.smtpcounter)))
-        print("|             HTTP     {:>5.0f}  {:>6.2f}% |".format(self.httpcounter, self.getPercentage(self.httpcounter)))
-        print("|             HTTPS    {:>5.0f}  {:>6.2f}% |".format(self.httpscounter, self.getPercentage(self.httpscounter)))
-        print("|             SMTP     {:>5.0f}  {:>6.2f}% |".format(self.smtpcounter, self.getPercentage(self.smtpcounter)))
-        print("|             FTP      {:>5.0f}  {:>6.2f}% |".format(self.ftpcounter, self.getPercentage(self.ftpcounter)))
-        print("|             SSH      {:>5.0f}  {:>6.2f}% |".format(self.sshcounter, self.getPercentage(self.sshcounter)))
-        print("|             NTP      {:>5.0f}  {:>6.2f}% |".format(self.ntpcounter, self.getPercentage(self.ntpcounter)))
-        print("|             ICMP     {:>5.0f}  {:>6.2f}% |".format(self.icmpcounter, self.getPercentage(self.icmpcounter)))
-        print("|             IPV6     {:>5.0f}  {:>6.2f}% |".format(self.ipv6counter, self.getPercentage(self.ipv6counter)))
-        print("|             telnet   {:>5.0f}  {:>6.2f}% |".format(self.telnetcounter, self.getPercentage(self.telnetcounter)))
-        print("|             whois    {:>5.0f}  {:>6.2f}% |".format(self.whoiscounter, self.getPercentage(self.whoiscounter)))
-        print("|             rsync    {:>5.0f}  {:>6.2f}% |".format(self.rsynccounter, self.getPercentage(self.rsynccounter)))
-        print("|         UDP          {:>5.0f}  {:>6.2f}% |".format(self.udpcounter, self.getPercentage(self.udpcounter)))
-        print("|             DHCP     {:>5.0f}  {:>6.2f}% |".format(self.dhcpcounter, self.getPercentage(self.dhcpcounter)))
-        print("|     NON-IP           {:>5.0f}  {:>6.2f}% |".format(self.nonipcounter, self.getPercentage(self.nonipcounter)))
-        print("|         ARP          {:>5.0f}  {:>6.2f}% |".format(self.arpcounter, self.getPercentage(self.arpcounter)))
-        print("|{:-<37}|".format(''))
+        print self.timeEnd - self.timeStart
+
+        print("| Ethernet     {:>5}  {:>6.2f}%  |".format(self.counter, self.getPercentage(self.counter)))
+        print("|   NON-IP     {:>5}  {:>6.2f}%  |".format(self.nonipcounter, self.getPercentage(self.nonipcounter)))
+        print("|     ARP      {:>5}  {:>6.2f}%  |".format(self.arpcounter, self.getPercentage(self.arpcounter)))
+        print("|   IP         {:>5}  {:>6.2f}%  |".format(self.ipcounter, self.getPercentage(self.ipcounter)))
+        print("|     TCP      {:>5}  {:>6.2f}%  |".format(self.tcpcounter, self.getPercentage(self.smtpcounter)))
+        print("|       HTTP   {:>5}  {:>6.2f}%  |".format(self.httpcounter, self.getPercentage(self.httpcounter)))
+        print("|       HTTPS  {:>5}  {:>6.2f}%  |".format(self.httpscounter, self.getPercentage(self.httpscounter)))
+        print("|       SMTP   {:>5}  {:>6.2f}%  |".format(self.smtpcounter, self.getPercentage(self.smtpcounter)))
+        print("|       FTP    {:>5}  {:>6.2f}%  |".format(self.ftpcounter, self.getPercentage(self.ftpcounter)))
+        print("|       SSH    {:>5}  {:>6.2f}%  |".format(self.sshcounter, self.getPercentage(self.sshcounter)))
+        print("|       NTP    {:>5}  {:>6.2f}%  |".format(self.ntpcounter, self.getPercentage(self.ntpcounter)))
+        print("|       ICMP   {:>5}  {:>6.2f}%  |".format(self.icmpcounter, self.getPercentage(self.icmpcounter)))
+        print("|       IPV6   {:>5}  {:>6.2f}%  |".format(self.ipv6counter, self.getPercentage(self.ipv6counter)))
+        print("|       telnet {:>5}  {:>6.2f}%  |".format(self.telnetcounter, self.getPercentage(self.telnetcounter)))
+        print("|       whois  {:>5}  {:>6.2f}%  |".format(self.whoiscounter, self.getPercentage(self.whoiscounter)))
+        print("|       rsync  {:>5}  {:>6.2f}%  |".format(self.rsynccounter, self.getPercentage(self.rsynccounter)))
+        print("|     UDP      {:>5}  {:>6.2f}%  |".format(self.udpcounter, self.getPercentage(self.udpcounter)))
+        print("|       DHCP   {:>5}  {:>6.2f}%  |".format(self.dhcpcounter, self.getPercentage(self.dhcpcounter)))
+        print("|{:-<30}|".format(''))
         self.other = self.counter-(self.arpcounter+ \
                                    self.httpcounter+ \
                                    self.httpscounter+ \
@@ -233,7 +253,7 @@ class scan():
 
 
     def getPercentage(self, number):
-        return ((number/self.counter)*100)
+        return ((number/float(self.counter))*100)
 
 
 
