@@ -11,7 +11,7 @@ from optparse import OptionParser
 
 def setArgs():
     global options
-    parser = OptionParser()
+    parser = OptionParser(usage = 'usage: %prog [-r FILE] arguments')
     parser.add_option("-r", "--read", dest="filename",
                       help="read pcap FILE", metavar="FILE")
     parser.add_option("-q", "--quiet",
@@ -42,7 +42,8 @@ def setArgs():
 
 
     if options.filename is None:
-        (options, args) = parser.parse_args(["-h"])
+        parser.error('Filename not given')
+        #(options, args) = parser.parse_args(["-h"])
 
     return options
 
