@@ -7,6 +7,7 @@ import os
 
 import analyzeHttp as http
 import analyzeDns as dns
+import analyzeArp as arp
 
 from math import trunc
 
@@ -39,6 +40,7 @@ class scan():
         self.ipv6counter=0
 
         self.ethPacketList = []
+        self.arpPacketList = []
         self.ipPacketList = []
         self.tcpPacketList = []
         self.udpPacketList = []
@@ -51,6 +53,7 @@ class scan():
         # plug-in analyzers
         self.http = http.analyzeHttp(self.tcpPacketList)
         self.dns = dns.analyzeDns(self.ethPacketList)
+        self.arp = arp.analyzeArp(self.arpPacketList)
 
     def setCounters(self):
         # Packet processing loop
@@ -81,6 +84,7 @@ class scan():
             else:
                 self.nonipcounter += 1
 
+
             # IPV4 packets
             if eth.type == dpkt.ethernet.ETH_TYPE_IP:
                 self.ipPacketList.append(ip)
@@ -91,6 +95,7 @@ class scan():
 
             # ARP packet
             elif eth.type==dpkt.ethernet.ETH_TYPE_ARP:
+                self.arpPacketList.append(ip)
                 self.arpcounter+=1
 
             # ICMP packets
@@ -261,13 +266,6 @@ def ipDecode(p):
     return ".".join(["{}".format(ord(x)) for x in str(p)])
 
 
-def addColonsToMac(macAddr):
-    """This function accepts a 12 hex digit string and converts it to a colon separated string"""
-    s = list()
-    for i in range(12 / 2): 	# mac_addr should always be 12 chars, we work in groups of 2 chars
-        s.append(macAddr[i*2:i*2+2])
-    r = ":".join(s)		# I know this looks strange, refer to http://docs.python.org/library/stdtypes.html#sequence-types-str-unicode-list-tuple-bytearray-buffer-xrange
-    return r
 
 
 if __name__ =="__main__":

@@ -32,6 +32,9 @@ def setArgs():
     parser.add_option("-d", "--dns",
                       action="store_true", dest="pDns", default=False,
                       help="print dns requests/responses")
+    parser.add_option("-a", "--arp",
+                      action="store_true", dest="pArp", default=False,
+                      help="print arp requests/responses")
 
     (options, args) = parser.parse_args()
     print("\nDEBUG: {}\n".format(str(options)))
@@ -69,6 +72,9 @@ def main():
     if args.pConn:
         test.printConnections(v=True)
         commandLine = True
+    if args.pArp:
+        test.arp.printArp()
+        commandLine = True
 
     if commandLine:
         return 0
@@ -86,6 +92,7 @@ def main():
         print('4. Print Connections')
         print('5. Subnets')
         print('6. DNS')
+        print('7 ARP')
         print('^C quit')
 
         choice = input('\nChoice: ')
@@ -107,6 +114,8 @@ def main():
             raw_input('Press any key to continue')
         elif choice is 6:
             test.dns.analyze()
+        elif choice is 7:
+            test.arp.printArp()
 
 if __name__ == '__main__':
     main()
