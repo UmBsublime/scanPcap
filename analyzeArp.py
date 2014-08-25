@@ -10,9 +10,6 @@ class analyzeArp():
 
         self.arpList = arpList
 
-        #self.analyze()
-        pass
-
     def printArp(self):
         fileName = '.arp.tmp'
         for arp in self.arpList:
@@ -41,10 +38,6 @@ class analyzeArp():
         os.system("less {}".format(fileName))
         os.system("rm {}".format(fileName))
 
-
-
-
-
 def convertMacToStr(buffer):
     macaddr = ''
     for intval in struct.unpack('BBBBBB', buffer):
@@ -56,9 +49,9 @@ def convertMacToStr(buffer):
     return macaddr
 
 def addColonsToMac(macAddr):
-    """This function accepts a 12 hex digit string and converts it to a colon separated string"""
+
     s = list()
-    for i in range(12 / 2): 	# mac_addr should always be 12 chars, we work in groups of 2 chars
+    for i in range(12 / 2):
         s.append(macAddr[i*2:i*2+2])
-    r = ":".join(s)		# I know this looks strange, refer to http://docs.python.org/library/stdtypes.html#sequence-types-str-unicode-list-tuple-bytearray-buffer-xrange
+    r = ":".join(s)
     return r
