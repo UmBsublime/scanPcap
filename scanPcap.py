@@ -35,6 +35,9 @@ def setArgs():
     parser.add_option("-a", "--arp",
                       action="store_true", dest="pArp", default=False,
                       help="print arp requests/responses")
+    parser.add_option("-n", "--subnet",
+                      action="store_true", dest="pSubnet", default=False,
+                      help="print stats about different subnets")
 
     (options, args) = parser.parse_args()
     print("\nDEBUG: {}\n".format(str(options)))
@@ -76,6 +79,9 @@ def main():
     if args.pArp:
         test.arp.printArp()
         commandLine = True
+    if args.pSubnet:
+        test.printSubnets(24)
+        commandLine = True
 
     if commandLine:
         return 0
@@ -111,7 +117,7 @@ def main():
         elif choice is 4:
             test.printConnections(v=True)
         elif choice is 5:
-            test.printSubnets()
+            test.printSubnets(24)
             raw_input('Press any key to continue')
         elif choice is 6:
             test.dns.analyze()

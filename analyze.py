@@ -9,7 +9,7 @@ import analyzeHttp as http
 import analyzeDns as dns
 import analyzeArp as arp
 
-from math import trunc
+
 
 class scan():
 
@@ -107,7 +107,7 @@ class scan():
 
                 # Extract destination
                 string = socket.inet_ntoa(ip.dst)
-                address = '.'.join(string.split(".")[:2]) # ---->>>> Can easily change subnet statistic here
+                address = '.'.join(string.split("."))#[:2]) # ---->>>> Can easily change subnet statistic here
                 if address in self.subnets: #increase count in dict
                     self.subnets[address] = self.subnets[address] + 1
                 else: #insert key, value in dict
@@ -250,11 +250,29 @@ class scan():
         print("--------------------------------------------------------------")
 
 
-    def printSubnets(self):
+    def printSubnets(self, subMask):
         # Print addresses
-        print ("Address \t \t Occurences")
+
+        import string
+        address = '.'.join(string.split("."))#[:2])
+
+
+
+
+        print ("Address lol\t \t Occurences")
         for key, value in sorted(self.subnets.iteritems(), key=lambda t: int(t[0].split(".")[0])):
-            print ("%s/16 \t = \t %s" %(key, value))
+        #for key, value in self.subnets.items():
+            #key=lambda t: int(t[0].split(".")[0])):
+
+            if subMask is 24:
+                address = '.'.join(key.split(".")[:3])
+            elif subMask is 16:
+                address = '.'.join(key.split(".")[:2])
+            elif subMask is 16:
+                address = '.'.join(key.split(".")[:1])
+            else:
+                address = key
+            print ("  {:<20}/{:<5}=   {}".format(address, subMask, value))
 
 
     def getPercentage(self, number):
@@ -264,8 +282,6 @@ class scan():
 
 def ipDecode(p):
     return ".".join(["{}".format(ord(x)) for x in str(p)])
-
-
 
 
 if __name__ =="__main__":
