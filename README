@@ -10,7 +10,6 @@ Usage: scanPcap.py [-r FILE] arguments
 Options
 	-h, --help            show this help message and exit
 	-v, --verbose         prints verbose output for any following argument
-    -q, --quiet           don't print status messages to stdout
 	-u, --url             shows url requests
 	-c, --conn            shows ip connections
 	-t, --http            shows http requests
