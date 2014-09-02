@@ -15,8 +15,13 @@ def setArgs():
     parser.add_option("-r", "--read", dest="filename",
                       help="read pcap FILE", metavar="FILE")
     parser.add_option("-v", "--verbose",
+<<<<<<< HEAD
                       action="store_false", dest="verbose", default=False,
                       help="don't print status messages to stdout")
+=======
+                      action="store_true", dest="verbose", default=False,
+                      help="prints verbose output for any following argument")
+>>>>>>> dd0be56180df27d298d623bf6117fa8f2ddbb0f6
     parser.add_option("-u", "--url",
                       action="store_true", dest="pUrl", default=False,
                       help="shows url requests")
