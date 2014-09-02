@@ -14,8 +14,8 @@ def setArgs():
     parser = OptionParser(usage = 'usage: %prog [-r FILE] arguments')
     parser.add_option("-r", "--read", dest="filename",
                       help="read pcap FILE", metavar="FILE")
-    parser.add_option("-q", "--quiet",
-                      action="store_false", dest="verbose", default=True,
+    parser.add_option("-v", "--verbose",
+                      action="store_false", dest="verbose", default=False,
                       help="don't print status messages to stdout")
     parser.add_option("-u", "--url",
                       action="store_true", dest="pUrl", default=False,
