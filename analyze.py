@@ -5,6 +5,8 @@ import socket
 import sys
 import os
 
+from commands import getoutput
+
 import analyzeHttp as http
 import analyzeDns as dns
 import analyzeArp as arp
@@ -17,8 +19,9 @@ class scan():
 
         self.filename = filename
 
-        self.timeStart = 0
-        self.timeEnd = 0
+        self.startTime = None
+        self.endTime = None
+        self.timeDelta = None
 
         self.counter=0
         self.ipcounter=0
@@ -58,20 +61,21 @@ class scan():
     def setCounters(self):
         # Packet processing loop
         capture = dpkt.pcap.Reader(open(self.filename,'rb'))
-        #maxPacket = len(capture[0]-1)
-        #self.timeStart = capture[ts][1]
-        #self.timeEnd = capture[0][-1]
-        tsCounter = 0
-        for ts in capture:
-            tsCounter += 1
+        self.startTime = getoutput("tcpdump -nttttr {} | head -n 1 | cut -d' ' -f1-2". format(self.filename))
+        self.startTime = self.startTime.split('\n')
+        #print ('Start Time: {}'.format(self.startTime[1]))
+
+        self.endTime = getoutput("tcpdump -nttttr {} | tail -n 1 | cut -d' ' -f1-2". format(self.filename))
+        self.endTime = self.endTime.split('\n')
+        #print ('End Time: {}'.format(self.endTime[1]))
+
+        tS = datetime_from_str(self.startTime[1])
+        tE =  datetime_from_str(self.endTime[1])
+        self.timeDelta  = tE[1] - tS[1]
+
         for ts,pkt in capture:
             self.counter+=1
-            if self.counter == (tsCounter - 1):
-                self.timeEnd = ts
-            if self.counter == 1:
-                self.timeStart = ts
 
-            #print ts
 
             # Parse ethernet packet
             eth=dpkt.ethernet.Ethernet(pkt)
@@ -190,12 +194,12 @@ class scan():
 
     def printTotals(self):
         # Print packet totals
+
+        print ('File Name:  {}'.format(self.filename))
+        print ('Start Time: {}'.format(self.startTime[1]))
+        print ('End Time:   {}'.format(self.endTime[1]))
+        print ('Duration:   {}'.format(self.timeDelta))
         print("|{:-<30}|".format(''))
-        print self.timeStart
-        print self.timeEnd
-
-        print self.timeEnd - self.timeStart
-
         print("| Ethernet     {:>5}  {:>6.2f}%  |".format(self.counter, self.getPercentage(self.counter)))
         print("|   NON-IP     {:>5}  {:>6.2f}%  |".format(self.nonipcounter, self.getPercentage(self.nonipcounter)))
         print("|     ARP      {:>5}  {:>6.2f}%  |".format(self.arpcounter, self.getPercentage(self.arpcounter)))
@@ -284,6 +288,75 @@ def ipDecode(p):
     return ".".join(["{}".format(ord(x)) for x in str(p)])
 
 
+
+
+
+def datetime_from_str(time_str):
+
+    # got from http://code.activestate.com/recipes/577135-parse-a-datetime-string-to-a-datetime-instance/
+    """Return (<scope>, <datetime.datetime() instance>) for the given
+    datetime string.
+
+    >>> _datetime_from_str("2009")
+    ('year', datetime.datetime(2009, 1, 1, 0, 0))
+    >>> _datetime_from_str("2009-12")
+    ('month', datetime.datetime(2009, 12, 1, 0, 0))
+    >>> _datetime_from_str("2009-12-25")
+    ('day', datetime.datetime(2009, 12, 25, 0, 0))
+    >>> _datetime_from_str("2009-12-25 13")
+    ('hour', datetime.datetime(2009, 12, 25, 13, 0))
+    >>> _datetime_from_str("2009-12-25 13:05")
+    ('minute', datetime.datetime(2009, 12, 25, 13, 5))
+    >>> _datetime_from_str("2009-12-25 13:05:14")
+    ('second', datetime.datetime(2009, 12, 25, 13, 5, 14))
+    >>> _datetime_from_str("2009-12-25 13:05:14.453728")
+    ('microsecond', datetime.datetime(2009, 12, 25, 13, 5, 14, 453728))
+    """
+    import time
+    import datetime
+    formats = [
+        # <scope>, <pattern>, <format>
+        ("year", "YYYY", "%Y"),
+        ("month", "YYYY-MM", "%Y-%m"),
+        ("day", "YYYY-MM-DD", "%Y-%m-%d"),
+        ("hour", "YYYY-MM-DD HH", "%Y-%m-%d %H"),
+        ("minute", "YYYY-MM-DD HH:MM", "%Y-%m-%d %H:%M"),
+        ("second", "YYYY-MM-DD HH:MM:SS", "%Y-%m-%d %H:%M:%S"),
+        # ".<microsecond>" at end is manually handled below
+        ("microsecond", "YYYY-MM-DD HH:MM:SS", "%Y-%m-%d %H:%M:%S"),
+    ]
+    for scope, pattern, format in formats:
+        if scope == "microsecond":
+            # Special handling for microsecond part. AFAIK there isn't a
+            # strftime code for this.
+            if time_str.count('.') != 1:
+                continue
+            time_str, microseconds_str = time_str.split('.')
+            try:
+                microsecond = int((microseconds_str + '000000')[:6])
+            except ValueError:
+                continue
+        try:
+            # This comment here is the modern way. The subsequent two
+            # lines are for Python 2.4 support.
+            #t = datetime.datetime.strptime(time_str, format)
+            t_tuple = time.strptime(time_str, format)
+            t = datetime.datetime(*t_tuple[:6])
+        except ValueError:
+            pass
+        else:
+            if scope == "microsecond":
+                t = t.replace(microsecond=microsecond)
+            return scope, t
+    else:
+        raise ValueError("could not determine date from %r: does not "
+            "match any of the accepted patterns ('%s')"
+            % (time_str, "', '".join(s for s,p,f in formats)))
+
+
+
+
+
 if __name__ =="__main__":
 
     test = scan(sys.argv[1])
@@ -294,3 +367,6 @@ if __name__ =="__main__":
     test.http.printHttpRequests(vv=True)
 
     test.printConnections()
+
+
+

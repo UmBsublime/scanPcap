@@ -1,5 +1,3 @@
-import dpkt
-
 import os
 import analyze
 import struct
