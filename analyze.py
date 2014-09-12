@@ -203,7 +203,7 @@ class scan():
         print ('Start Time: {}'.format(self.startTime[1]))
         print ('End Time:   {}'.format(self.endTime[1]))
         print ('Duration:   {}'.format(self.timeDelta))
-        print("|{:-<30}|".format(''))
+        print("|{:-<33}|".format(''))
         print("| Ethernet     {:>8}  {:>6.2f}%  |".format(self.counter, self.getPercentage(self.counter)))
         print("|   NON-IP     {:>8}  {:>6.2f}%  |".format(self.nonipcounter, self.getPercentage(self.nonipcounter)))
         print("|     ARP      {:>8}  {:>6.2f}%  |".format(self.arpcounter, self.getPercentage(self.arpcounter)))
@@ -222,7 +222,7 @@ class scan():
         print("|       rsync  {:>8}  {:>6.2f}%  |".format(self.rsynccounter, self.getPercentage(self.rsynccounter)))
         print("|     UDP      {:>8}  {:>6.2f}%  |".format(self.udpcounter, self.getPercentage(self.udpcounter)))
         print("|       DHCP   {:>8}  {:>6.2f}%  |".format(self.dhcpcounter, self.getPercentage(self.dhcpcounter)))
-        print("|{:-<30}|".format(''))
+        print("|{:-<33}|".format(''))
         self.other = self.counter-(self.arpcounter+ \
                                    self.httpcounter+ \
                                    self.httpscounter+ \
