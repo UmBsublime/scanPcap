@@ -76,101 +76,102 @@ class scan():
         for ts,pkt in capture:
             self.counter+=1
 
-
-            # Parse ethernet packet
-            eth=dpkt.ethernet.Ethernet(pkt)
-            self.ethPacketList.append(eth)
-            ip=eth.data
-
-            #check if IP packet or non-ip packet
-            if eth.type == dpkt.ethernet.ETH_TYPE_IP or eth.type == dpkt.ethernet.ETH_TYPE_IP6:
-                self.ipcounter += 1
-            else:
-                self.nonipcounter += 1
-
-
-            # IPV4 packets
-            if eth.type == dpkt.ethernet.ETH_TYPE_IP:
-                self.ipPacketList.append(ip)
-
-            # IPV6 packets
-            if eth.type==dpkt.ethernet.ETH_TYPE_IP6:
-                self.ipv6counter+=1
-
-            # ARP packet
-            elif eth.type==dpkt.ethernet.ETH_TYPE_ARP:
-                self.arpPacketList.append(ip)
-                self.arpcounter+=1
-            
             try:
+                # Parse ethernet packet
+                eth=dpkt.ethernet.Ethernet(pkt)
+                self.ethPacketList.append(eth)
+                ip=eth.data
+    
+                #check if IP packet or non-ip packet
+                if eth.type == dpkt.ethernet.ETH_TYPE_IP or eth.type == dpkt.ethernet.ETH_TYPE_IP6:
+                    self.ipcounter += 1
+                else:
+                    self.nonipcounter += 1
+    
+    
+                # IPV4 packets
+                if eth.type == dpkt.ethernet.ETH_TYPE_IP:
+                    self.ipPacketList.append(ip)
+    
+                # IPV6 packets
+                if eth.type==dpkt.ethernet.ETH_TYPE_IP6:
+                    self.ipv6counter+=1
+    
+                # ARP packet
+                elif eth.type==dpkt.ethernet.ETH_TYPE_ARP:
+                    self.arpPacketList.append(ip)
+                    self.arpcounter+=1
+                
+                
                 # ICMP packets
                 elif ip.p==dpkt.ip.IP_PROTO_ICMP:
                     self.icmpcounter+=1
+                
+    
+                # IPV4 packets
+                elif eth.type==dpkt.ethernet.ETH_TYPE_IP:
+    
+                    # Extract destination
+                    string = socket.inet_ntoa(ip.dst)
+                    address = '.'.join(string.split("."))#[:2]) # ---->>>> Can easily change subnet statistic here
+                    if address in self.subnets: #increase count in dict
+                        self.subnets[address] = self.subnets[address] + 1
+                    else: #insert key, value in dict
+                        self.subnets[address] = 1
+    
+                    # TCP packets
+                    if ip.p==dpkt.ip.IP_PROTO_TCP: #ip.p == 6:
+                        self.tcpcounter+=1
+                        tcp=ip.data
+                        self.tcpPacketList.append(tcp)
+    
+                        # HTTP uses port 80
+                        if tcp.dport == 80 or tcp.sport == 80:
+                            self.httpcounter+=1
+    
+                        # HTTPS uses port 443
+                        elif tcp.dport == 443 or tcp.sport == 443:
+                            self.httpscounter+=1
+    
+                        # SSH uses port 22
+                        elif tcp.dport == 22 or tcp.sport == 22:
+                            self.sshcounter+=1
+    
+                        # SMTP uses port 25
+                        elif tcp.dport == 25 or tcp.sport == 25:
+                            self.smtpcounter+=1
+    
+                        # telnet uses port 23
+                        elif tcp.dport == 23 or tcp.sport == 23:
+                            self.telnetcounter+=1
+    
+                        # whois uses port 43
+                        elif tcp.dport == 43 or tcp.sport == 43:
+                            self.whoiscounter+=1
+    
+                        # rsync uses port 873
+                        elif tcp.dport == 873 or tcp.sport == 873:
+                            self.rsynccounter+=1
+    
+                        # FTP uses port 21
+                        elif tcp.dport == 21 or tcp.sport == 21:
+                            self.ftpcounter+=1
+    
+                    # UDP packets
+                    elif ip.p==dpkt.ip.IP_PROTO_UDP: #ip.p==17:
+                        self.udpcounter+=1
+                        udp=ip.data
+                        self.udpPacketList.append(udp)
+    
+                        # DHCP uses ports 67, 68
+                        if udp.dport == 67 or udp.dport == 68:
+                            self.dhcpcounter+=1
+    
+                        # NTP uses port 123
+                        elif udp.dport == 123:
+                            self.ntpcounter+=1
             except AttributeError:
                 continue
-
-            # IPV4 packets
-            elif eth.type==dpkt.ethernet.ETH_TYPE_IP:
-
-                # Extract destination
-                string = socket.inet_ntoa(ip.dst)
-                address = '.'.join(string.split("."))#[:2]) # ---->>>> Can easily change subnet statistic here
-                if address in self.subnets: #increase count in dict
-                    self.subnets[address] = self.subnets[address] + 1
-                else: #insert key, value in dict
-                    self.subnets[address] = 1
-
-                # TCP packets
-                if ip.p==dpkt.ip.IP_PROTO_TCP: #ip.p == 6:
-                    self.tcpcounter+=1
-                    tcp=ip.data
-                    self.tcpPacketList.append(tcp)
-
-                    # HTTP uses port 80
-                    if tcp.dport == 80 or tcp.sport == 80:
-                        self.httpcounter+=1
-
-                    # HTTPS uses port 443
-                    elif tcp.dport == 443 or tcp.sport == 443:
-                        self.httpscounter+=1
-
-                    # SSH uses port 22
-                    elif tcp.dport == 22 or tcp.sport == 22:
-                        self.sshcounter+=1
-
-                    # SMTP uses port 25
-                    elif tcp.dport == 25 or tcp.sport == 25:
-                        self.smtpcounter+=1
-
-                    # telnet uses port 23
-                    elif tcp.dport == 23 or tcp.sport == 23:
-                        self.telnetcounter+=1
-
-                    # whois uses port 43
-                    elif tcp.dport == 43 or tcp.sport == 43:
-                        self.whoiscounter+=1
-
-                    # rsync uses port 873
-                    elif tcp.dport == 873 or tcp.sport == 873:
-                        self.rsynccounter+=1
-
-                    # FTP uses port 21
-                    elif tcp.dport == 21 or tcp.sport == 21:
-                        self.ftpcounter+=1
-
-                # UDP packets
-                elif ip.p==dpkt.ip.IP_PROTO_UDP: #ip.p==17:
-                    self.udpcounter+=1
-                    udp=ip.data
-                    self.udpPacketList.append(udp)
-
-                    # DHCP uses ports 67, 68
-                    if udp.dport == 67 or udp.dport == 68:
-                        self.dhcpcounter+=1
-
-                    # NTP uses port 123
-                    elif udp.dport == 123:
-                        self.ntpcounter+=1
 
     def printConnections(self, v=False):
 
