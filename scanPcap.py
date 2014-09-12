@@ -93,8 +93,8 @@ def main():
         print('4. Print Connections')
         print('5. Subnets')
         print('6. DNS')
-        print('7 ARP')
-        print('^C quit')
+        print('7. ARP')
+        print('^C Quit')
 
         choice = input('\nChoice: ')
         if choice is 'q' or choice is 'Q':
