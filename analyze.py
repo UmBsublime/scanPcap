@@ -101,10 +101,13 @@ class scan():
             elif eth.type==dpkt.ethernet.ETH_TYPE_ARP:
                 self.arpPacketList.append(ip)
                 self.arpcounter+=1
-
-            # ICMP packets
-            elif ip.p==dpkt.ip.IP_PROTO_ICMP:
-                self.icmpcounter+=1
+            
+            try:
+                # ICMP packets
+                elif ip.p==dpkt.ip.IP_PROTO_ICMP:
+                    self.icmpcounter+=1
+            except AttributeError:
+                continue
 
             # IPV4 packets
             elif eth.type==dpkt.ethernet.ETH_TYPE_IP:
