@@ -17,8 +17,10 @@ class scan():
 
     def __init__(self, filename):
 
-        self.filename = filename
 
+        self.filepath = filename
+        filename = filename.split('/')
+        self.filename = filename[0]
         self.startTime = None
         self.endTime = None
         self.timeDelta = None
@@ -60,12 +62,12 @@ class scan():
 
     def setCounters(self):
         # Packet processing loop
-        capture = dpkt.pcap.Reader(open(self.filename,'rb'))
-        self.startTime = getoutput("tcpdump -nttttr {} | head -n 1 | cut -d' ' -f1-2". format(self.filename))
+        capture = dpkt.pcap.Reader(open(self.filepath,'rb'))
+        self.startTime = getoutput("tcpdump -nttttr {} | head -n 1 | cut -d' ' -f1-2". format(self.filepath))
         self.startTime = self.startTime.split('\n')
         #print ('Start Time: {}'.format(self.startTime[1]))
 
-        self.endTime = getoutput("tcpdump -nttttr {} | tail -n 1 | cut -d' ' -f1-2". format(self.filename))
+        self.endTime = getoutput("tcpdump -nttttr {} | tail -n 1 | cut -d' ' -f1-2". format(self.filepath))
         self.endTime = self.endTime.split('\n')
         #print ('End Time: {}'.format(self.endTime[1]))
 
@@ -199,11 +201,11 @@ class scan():
     def printTotals(self):
         # Print packet totals
 
-        print ('File Name:  {}'.format(self.filename))
-        print ('Start Time: {}'.format(self.startTime[1]))
-        print ('End Time:   {}'.format(self.endTime[1]))
-        print ('Duration:   {}'.format(self.timeDelta))
-        print("|{:-<33}|".format(''))
+        print ('|{:40}|'.format('File: ' + self.filename))
+        print ('|{:40}|'.format('Start Time: ' + self.startTime[1]))
+        print ('|{:40}|'.format('End Time:   ' + self.endTime[1]))
+        print ('|{:40}|'.format('Duration:   ' + str(self.timeDelta)))
+        print("|{:-<40}|".format(''))
         print("| Ethernet     {:>8}  {:>6.2f}%  |".format(self.counter, self.getPercentage(self.counter)))
         print("|   NON-IP     {:>8}  {:>6.2f}%  |".format(self.nonipcounter, self.getPercentage(self.nonipcounter)))
         print("|     ARP      {:>8}  {:>6.2f}%  |".format(self.arpcounter, self.getPercentage(self.arpcounter)))
@@ -268,19 +270,30 @@ class scan():
 
 
         print ("Address lol\t \t Occurences")
-        for key, value in sorted(self.subnets.iteritems(), key=lambda t: int(t[0].split(".")[0])):
-        #for key, value in self.subnets.items():
-            #key=lambda t: int(t[0].split(".")[0])):
+
+        tempSubnet = {}
+
+        #for key, value in sorted(self.subnets.iteritems(), key=lambda t: int(t[0].split(".")[0])):
+        for key, value in  self.subnets.iteritems():
 
             if subMask is 24:
                 address = '.'.join(key.split(".")[:3])
             elif subMask is 16:
                 address = '.'.join(key.split(".")[:2])
-            elif subMask is 16:
+            elif subMask is 8:
                 address = '.'.join(key.split(".")[:1])
             else:
                 address = key
-            print ("  {:<20}/{:<5}=   {}".format(address, subMask, value))
+
+            if address not in tempSubnet.keys():
+                tempSubnet[address] = value
+            else:
+                tempSubnet[address] = tempSubnet[address] + value
+
+        for key, value in sorted(tempSubnet.iteritems(), key=lambda t: int(t[0].split(".")[0])):
+            print ("  {:<20}/{:<5}=   {}".format(key, subMask, value))
+
+
 
 
     def getPercentage(self, number):
@@ -300,21 +313,6 @@ def datetime_from_str(time_str):
     # got from http://code.activestate.com/recipes/577135-parse-a-datetime-string-to-a-datetime-instance/
     """Return (<scope>, <datetime.datetime() instance>) for the given
     datetime string.
-
-    >>> _datetime_from_str("2009")
-    ('year', datetime.datetime(2009, 1, 1, 0, 0))
-    >>> _datetime_from_str("2009-12")
-    ('month', datetime.datetime(2009, 12, 1, 0, 0))
-    >>> _datetime_from_str("2009-12-25")
-    ('day', datetime.datetime(2009, 12, 25, 0, 0))
-    >>> _datetime_from_str("2009-12-25 13")
-    ('hour', datetime.datetime(2009, 12, 25, 13, 0))
-    >>> _datetime_from_str("2009-12-25 13:05")
-    ('minute', datetime.datetime(2009, 12, 25, 13, 5))
-    >>> _datetime_from_str("2009-12-25 13:05:14")
-    ('second', datetime.datetime(2009, 12, 25, 13, 5, 14))
-    >>> _datetime_from_str("2009-12-25 13:05:14.453728")
-    ('microsecond', datetime.datetime(2009, 12, 25, 13, 5, 14, 453728))
     """
     import time
     import datetime

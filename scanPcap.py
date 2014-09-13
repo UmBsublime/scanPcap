@@ -82,40 +82,35 @@ def main():
 
 
     while True:
-        #os.system('clear')
-        print('|{:-<19}'.format(''))
-        print('| {:<17}|'.format('scan.py'))
-        print('| File: {:<.11s}|'.format(options.filename))
-        print('|{:-<19}\n'.format(''))
-        print('1. Basic analysis')
-        print('2. Print URLS')
-        print('3. Print HTTP Requests')
-        print('4. Print Connections')
-        print('5. Subnets')
-        print('6. DNS')
-        print('7. ARP')
+        os.system('clear')
+        print('|{:-<40}|'.format(''))
+        print('|{:<40}|'.format('scan.py'))
+        test.printTotals()
+        print('1. Print URLS')
+        print('2. Print HTTP Requests')
+        print('3. Print Connections')
+        print('4. Subnets')
+        print('5. DNS')
+        print('6. ARP')
         print('^C Quit')
 
         choice = input('\nChoice: ')
         if choice is 'q' or choice is 'Q':
             break
 
-        if choice is 1:
-            test.printTotals()
-            #test.printPacketPercentage()
             raw_input('Press any key to continue')
-        elif choice is 2:
+        elif choice is 1:
             test.http.printUrls()
-        elif choice is 3:
+        elif choice is 2:
             test.http.printHttpRequests(vv=True)
-        elif choice is 4:
+        elif choice is 3:
             test.printConnections(v=True)
-        elif choice is 5:
+        elif choice is 4:
             test.printSubnets(24)
             raw_input('Press any key to continue')
-        elif choice is 6:
+        elif choice is 5:
             test.dns.analyze()
-        elif choice is 7:
+        elif choice is 6:
             test.arp.printArp()
 
 if __name__ == '__main__':
