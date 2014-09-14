@@ -7,7 +7,7 @@ import analyze
 from optparse import OptionParser
 
 
-version = '0.0.1'
+version = '0.0.2'
 
 def setArgs():
     global options
@@ -88,6 +88,7 @@ def main():
         test.printSubnets(24)
         commandLine = True
 
+    # if run with command line arguments quit after showing results
     if commandLine:
         return 
 
@@ -106,11 +107,9 @@ def main():
         print('^C Quit')
 
         choice = input('\nChoice: ')
-        if choice is 'q' or choice is 'Q':
-            break
 
-            raw_input('Press any key to continue')
-        elif choice is 1:
+        # Make everything verbose when running interactively
+        if choice is 1:
             test.http.printUrls()
         elif choice is 2:
             test.http.printHttpRequests(vv=True)
@@ -122,7 +121,7 @@ def main():
         elif choice is 5:
             test.dns.analyze()
         elif choice is 6:
-            test.arp.printArp()
+            test.arp.printArp(v=True)
 
 if __name__ == '__main__':
     main()
