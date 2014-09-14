@@ -7,6 +7,8 @@ import analyze
 from optparse import OptionParser
 
 
+version = '0.0.1'
+
 def setArgs():
     global options
     parser = OptionParser(usage = 'usage: %prog [-r FILE] arguments')
@@ -59,7 +61,10 @@ def main():
         test.http.printUrls()
         commandLine = True
     if args.pHttp:
-        test.http.printHttpRequests(vv=True)
+        if args.verbose:
+            test.http.printHttpRequests(vv=True)
+        else:
+            test.http.printHttpRequests(v=True)
         commandLine = True
     if args.pDns:
         test.dns.analyze()
@@ -68,7 +73,10 @@ def main():
         test.printTotals()
         commandLine = True
     if args.pConn:
-        test.printConnections(v=True)
+        if args.verbose:
+            test.printConnections(v=True)
+        else:
+            test.printConnections()
         commandLine = True
     if args.pArp:
         test.arp.printArp()
@@ -84,7 +92,7 @@ def main():
     while True:
         os.system('clear')
         print('|{:-<40}|'.format(''))
-        print('|{:<40}|'.format('scan.py'))
+        print('|{:<40}|'.format(__file__.split('/')[-1] + ' v.' + version))
         test.printTotals()
         print('1. Print URLS')
         print('2. Print HTTP Requests')

@@ -1,7 +1,7 @@
 scanPcap
 ========
 
-Python utility to parse and analyze pcap files
+Small python tool to parse and analyze pcap files
 You can run it with arguments or just with a FILE
 
 

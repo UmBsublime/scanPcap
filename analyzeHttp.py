@@ -41,7 +41,6 @@ class analyzeHttp():
 
         os.system("less {}".format(fileName))
         os.system("rm {}".format(fileName))
-    #def printArp(v=False):
 
 
     def printHttpRequests(self, v=False, vv=False):
@@ -61,9 +60,21 @@ class analyzeHttp():
                             if vv:
                                 r +='{:<18}: {}\n'.format('VERSION', http.version)
                                 r += '{:<18}: {}\n'.format('METHOD',http.method)
-                            r += '{:-<18}|\n'.format('HEADERS')
-                            for key, value in http.headers.items():
-                                r += '{:<18}: {}\n'.format(key, value)
+                                r += '{:-<18}|\n'.format('HEADERS')
+                                for key, value in http.headers.items():
+                                    r += '{:<18}: {}\n'.format(key, value)
+                            else:
+                                r += '{:-<18}|\n'.format('HEADERS')
+                                for key, value in http.headers.items():
+                                    if  'host' in key:
+                                        r += '{:<18}: {}\n'.format(key, value)
+                                    if 'referer' in key:
+                                        r += '{:<18}: {}\n'.format(key, value)
+                                    if 'user-agent' in key:
+                                        r += '{:<18}: {}\n'.format(key, value)
+                                    if 'connection' in key:
+                                        r += '{:<18}: {}\n'.format(key, value)
+
                         host = http.headers['host']
                         if host.startswith('www'):
                             r += '{:<18}: {}\n'.format('URL',host, http.uri)
@@ -74,7 +85,6 @@ class analyzeHttp():
                         print(tcp.data)
                         pass
             except AttributeError:
-
                 pass
 
             with open(fileName,'a') as f:
