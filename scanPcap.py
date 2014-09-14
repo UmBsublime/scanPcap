@@ -79,7 +79,10 @@ def main():
             test.printConnections()
         commandLine = True
     if args.pArp:
-        test.arp.printArp()
+        if args.verbose:
+            test.arp.printArp(v=True)
+        else:
+            test.arp.printArp()
         commandLine = True
     if args.pSubnet:
         test.printSubnets(24)
