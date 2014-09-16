@@ -148,8 +148,12 @@ class scan():
                     if ip.p==dpkt.ip.IP_PROTO_TCP: #ip.p == 6:
                         self.tcpcounter+=1
                         tcp=ip.data
-                        print tcp.flags
-                        print (dir(tcp))
+
+                        for key, value in self.tcpType.iteritems():
+                            if tcp.flags == key:
+                                self.tcpType[key] +=1
+                        #print tcp.flags
+                        #print (dir(tcp))
 
 
 
@@ -229,6 +233,7 @@ class scan():
     def printTotals(self):
         # Print packet totals
         print (TH_ACK, TH_FIN, TH_PUSH, TH_RST, TH_SYN )
+        print self.tcpType
         print ('|{:40}|'.format('File: ' + self.filename))
         print ('|{:40}|'.format('Start Time: ' + self.startTime[1]))
         print ('|{:40}|'.format('End Time:   ' + self.endTime[1]))
