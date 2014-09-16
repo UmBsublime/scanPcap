@@ -5,6 +5,8 @@ import socket
 import sys
 import os
 
+from dpkt.tcp import TH_ACK, TH_CWR, TH_ECE, TH_FIN, TH_PUSH, TH_RST, TH_SYN, TH_URG
+
 from functools import wraps
 from commands import getoutput
 
@@ -322,6 +324,9 @@ class scan():
 
 if __name__ =="__main__":
 
+
+
+    print (TH_ACK, TH_CWR, TH_ECE, TH_FIN, TH_PUSH, TH_RST, TH_SYN, TH_URG)
     test = scan(sys.argv[1])
 
     test.printTotals()
