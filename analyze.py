@@ -66,6 +66,12 @@ class scan():
         self.tcpPacketList = []
         self.udpPacketList = []
 
+        self.tcpType = {'ACK':0,
+                        'FIN':0,
+                        'SYN':0,
+                        'PUSH':0,
+                        'RST':0}
+
         self.subnets = {}
 
         # initialize counters
@@ -132,7 +138,7 @@ class scan():
     
                     # Extract destination
                     string = socket.inet_ntoa(ip.dst)
-                    address = '.'.join(string.split("."))#[:2]) # ---->>>> Can easily change subnet statistic here
+                    address = '.'.join(string.split("."))
                     if address in self.subnets: #increase count in dict
                         self.subnets[address] = self.subnets[address] + 1
                     else: #insert key, value in dict
@@ -142,6 +148,10 @@ class scan():
                     if ip.p==dpkt.ip.IP_PROTO_TCP: #ip.p == 6:
                         self.tcpcounter+=1
                         tcp=ip.data
+                        print (dir(tcp))
+
+
+
                         self.tcpPacketList.append(tcp)
     
                         # HTTP uses port 80
@@ -217,7 +227,7 @@ class scan():
 
     def printTotals(self):
         # Print packet totals
-        print (TH_ACK, TH_CWR, TH_ECE, TH_FIN, TH_PUSH, TH_RST, TH_SYN, TH_URG)
+        print (TH_ACK, TH_FIN, TH_PUSH, TH_RST, TH_SYN )
         print ('|{:40}|'.format('File: ' + self.filename))
         print ('|{:40}|'.format('Start Time: ' + self.startTime[1]))
         print ('|{:40}|'.format('End Time:   ' + self.endTime[1]))
