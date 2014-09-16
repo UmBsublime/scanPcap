@@ -70,11 +70,13 @@ class scan():
         (16, 1, 8, 4, 2)
 
         print (TH_ACK, TH_FIN, TH_PUSH, TH_RST, TH_SYN )
-        self.tcpType = {1:0,   #FIN
-                        2:0,   #SYN
-                        4:0,   #RST
-                        8:0,   #PUSH
-                        16:0}  # ACK
+
+
+        self.tcpType = [[1, 'FIN', 0],
+                        [2, 'SYN', 0],
+                        [4, 'RST', 0],
+                        [8, 'PUSH', 0],
+                        [16, 'ACK', 0]]
 
 
         self.subnets = {}
@@ -154,13 +156,9 @@ class scan():
                         self.tcpcounter+=1
                         tcp=ip.data
 
-                        for key, value in self.tcpType.iteritems():
-                            if tcp.flags == key:
-                                self.tcpType[key] +=1
-                        #print tcp.flags
-                        #print (dir(tcp))
-
-
+                        for flag in self.tcpType:
+                            if tcp.flags == flag[0]:
+                                flag[2] += 1
 
                         self.tcpPacketList.append(tcp)
     
@@ -244,6 +242,8 @@ class scan():
         print ('|{:40}|'.format('Start Time: ' + self.startTime[1]))
         print ('|{:40}|'.format('End Time:   ' + self.endTime[1]))
         print ('|{:40}|'.format('Duration:   ' + str(self.timeDelta)))
+        for flag in self.tcpType:
+            print ('|{:40}|'.format('{:<5}: {}'.format(flag[1], flag[2])))
         print("|{:-<40}|".format(''))
         print("| Ethernet     {:>8}  {:>6.2f}%  |".format(self.counter, self.getPercentage(self.counter)))
         print("|   NON-IP     {:>8}  {:>6.2f}%  |".format(self.nonipcounter, self.getPercentage(self.nonipcounter)))
