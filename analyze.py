@@ -66,11 +66,16 @@ class scan():
         self.tcpPacketList = []
         self.udpPacketList = []
 
-        self.tcpType = {'ACK':0,
-                        'FIN':0,
-                        'SYN':0,
-                        'PUSH':0,
-                        'RST':0}
+
+        (16, 1, 8, 4, 2)
+
+        print (TH_ACK, TH_FIN, TH_PUSH, TH_RST, TH_SYN )
+        self.tcpType = {1:0,   #FIN
+                        2:0,   #SYN
+                        4:0,   #RST
+                        8:0,   #PUSH
+                        16:0}  # ACK
+
 
         self.subnets = {}
 
@@ -232,6 +237,7 @@ class scan():
 
     def printTotals(self):
         # Print packet totals
+
         print (TH_ACK, TH_FIN, TH_PUSH, TH_RST, TH_SYN )
         print self.tcpType
         print ('|{:40}|'.format('File: ' + self.filename))
