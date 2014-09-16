@@ -148,6 +148,7 @@ class scan():
                     if ip.p==dpkt.ip.IP_PROTO_TCP: #ip.p == 6:
                         self.tcpcounter+=1
                         tcp=ip.data
+                        print tcp.opts
                         print (dir(tcp))
 
 
