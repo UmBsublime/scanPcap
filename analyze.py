@@ -33,8 +33,8 @@ class scan():
 
 
         self.filepath = filename
-        filename = filename.split('/')
-        self.filename = filename[0]
+        self.filename = filename.split('/')[0]
+        #self.filename = filename[0]
         self.startTime = None
         self.endTime = None
         self.timeDelta = None
@@ -70,7 +70,6 @@ class scan():
         self.setCounters()
 
         # plug-in parsers
-
         self.http = http.ParseHttp(self.tcpPacketList)
         self.dns = dns.ParseDns(self.ethPacketList)
         self.arp = arp.ParseArp(self.arpPacketList)
