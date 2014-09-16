@@ -56,7 +56,7 @@ def main():
     print('\n--> ANALYZING CAPTURE . . .\n')
 
     test = analyze.scan(options.filename)
-    os.system('clear')
+
     if args.pUrl:
         test.urls.prepOut()
         test.urls.out()
@@ -103,6 +103,7 @@ def main():
     test.dns.prepOut()
     test.urls.prepOut()
 
+    os.system('clear')
 
     while True:
         os.system('clear')
