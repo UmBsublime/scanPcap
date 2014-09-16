@@ -58,16 +58,20 @@ def main():
     test = analyze.scan(options.filename)
     os.system('clear')
     if args.pUrl:
-        test.http.printUrls()
+        test.urls.prepOut()
+        test.urls.out()
         commandLine = True
     if args.pHttp:
         if args.verbose:
-            test.http.printHttpRequests(vv=True)
+            test.http.prepOut(vv=True)
+            test.http.out()
         else:
-            test.http.printHttpRequests(v=True)
+            test.http.prepOut(v=True)
+            test.http.out()
         commandLine = True
     if args.pDns:
-        test.dns.analyze()
+        test.dns.prepOut()
+        test.dns.out()
         commandLine = True
     if args.pStats:
         test.printTotals()
@@ -80,9 +84,11 @@ def main():
         commandLine = True
     if args.pArp:
         if args.verbose:
-            test.arp.printArp(v=True)
+            test.arp.prepOut(True)
+            test.arp.out()
         else:
-            test.arp.printArp()
+            test.arp.prepOut()
+            test.arp.out()
         commandLine = True
     if args.pSubnet:
         test.printSubnets(24)
@@ -91,6 +97,11 @@ def main():
     # if run with command line arguments quit after showing results
     if commandLine:
         return 
+
+    test.http.prepOut(vv=True)
+    test.arp.prepOut(True)
+    test.dns.prepOut()
+    test.urls.prepOut()
 
 
     while True:
@@ -110,18 +121,18 @@ def main():
 
         # Make everything verbose when running interactively
         if choice is 1:
-            test.http.printUrls()
+            test.urls.out()
         elif choice is 2:
-            test.http.printHttpRequests(vv=True)
+            test.http.out()
         elif choice is 3:
             test.printConnections(v=True)
         elif choice is 4:
             test.printSubnets(24)
             raw_input('Press any key to continue')
         elif choice is 5:
-            test.dns.analyze()
+            test.dns.out()
         elif choice is 6:
-            test.arp.printArp(v=True)
+            test.arp.out()
 
 if __name__ == '__main__':
     main()

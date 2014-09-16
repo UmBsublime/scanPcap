@@ -4,16 +4,27 @@ import dpkt
 import socket
 import sys
 import os
-import struct
 
+from functools import wraps
 from commands import getoutput
 
 from helper import *
 
-import analyzeHttp as http
-import analyzeDns as dns
-import analyzeArp as arp
+import parseHttp as http
+import parseDns as dns
+import parseArp as arp
+import parseUrls as urls
 
+def cache(func):
+    saved = {}
+    @wraps(func)
+    def newfunc(*args):
+        if args in saved:
+            return newfunc(*args)
+        result = func(*args)
+        saved[args] = result
+        return result
+    return newfunc
 
 
 class scan():
@@ -58,10 +69,12 @@ class scan():
         # initialize counters
         self.setCounters()
 
-        # plug-in analyzers
-        self.http = http.analyzeHttp(self.tcpPacketList)
-        self.dns = dns.analyzeDns(self.ethPacketList)
-        self.arp = arp.analyzeArp(self.arpPacketList)
+        # plug-in parsers
+
+        self.http = http.ParseHttp(self.tcpPacketList)
+        self.dns = dns.ParseDns(self.ethPacketList)
+        self.arp = arp.ParseArp(self.arpPacketList)
+        self.urls = urls.ParseUrls(self.tcpPacketList)
 
     def setCounters(self):
         # Packet processing loop
@@ -298,7 +311,7 @@ class scan():
 
 
 
-
+    #@cache
     def getPercentage(self, number):
         return ((number/float(self.counter))*100)
 

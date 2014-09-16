@@ -1,7 +1,10 @@
 import struct
 
+from socket import inet_ntoa
+
 def ipDecode(p):
-    return ".".join(["{}".format(ord(x)) for x in str(p)])
+    return inet_ntoa(p)
+
 
 
 def convertMacToStr(buffer):

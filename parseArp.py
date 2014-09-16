@@ -1,16 +1,13 @@
-import os
-#import analyze
-from analyze import ipDecode, addColonsToMac, convertMacToStr
+from helper import ipDecode, addColonsToMac, convertMacToStr
+from protoParser import ProtoParser
 
-
-class analyzeArp():
+class ParseArp(ProtoParser):
 
     def __init__(self, arpList):
-
         self.arpList = arpList
+        ProtoParser.__init__(self, '.arp.tmp')
 
-    def printArp(self, v=False):
-        fileName = '.arp.tmp'
+    def prepOut(self, v=False):
         for arp in self.arpList:
             a= ''
 
@@ -31,9 +28,6 @@ class analyzeArp():
 
             a += '{:-<42}\n'.format('')
 
-            with open(fileName,'a') as f:
+            with open(self.tempFile,'a') as f:
                 f.writelines(a)
-
-        os.system("less {}".format(fileName))
-        os.system("rm {}".format(fileName))
 

@@ -1,50 +1,14 @@
 import dpkt
-import os
 
-class analyzeHttp():
+from protoParser import ProtoParser
+
+class ParseHttp(ProtoParser):
 
     def __init__(self, tcpList):
-
         self.tcpList = tcpList
+        ProtoParser.__init__(self, '.http.tmp')
 
-
-    def printUrls(self, v=False):
-        fileName = '.urls.tmp'
-        u = ''
-        for tcp in self.tcpList:
-            try:
-                if tcp.dport == 80 and len(tcp.data) > 0:
-                    try:
-                        http = dpkt.http.Request(tcp.data)
-                        host = http.headers['host']
-
-                        if host.startswith('www'):
-                            if v:
-                                #HEADERS
-                                u += '\n{:-<18}|\n'.format('HEADERS')
-                                for key, value in http.headers.items():
-                                    u += '{:<18}: {}\n'.format(key, value)
-                            #URL
-                            u += '{:<18}: {}\n'.format('URL',host, http.uri)
-
-                    except dpkt.dpkt.UnpackError.InvalidHeader as e:
-                        print ("I/O error({}): ".format(e))
-                        print(len(tcp.data))
-                        print(tcp.data)
-                        pass
-            except AttributeError:
-                pass
-
-
-            with open(fileName,'a') as f:
-                f.writelines(u)
-
-        os.system("less {}".format(fileName))
-        os.system("rm {}".format(fileName))
-
-
-    def printHttpRequests(self, v=False, vv=False):
-        fileName = '.requests.tmp'
+    def prepOut(self, v=False, vv=False):
         if vv:
             v = True
         for tcp in self.tcpList:
@@ -87,8 +51,5 @@ class analyzeHttp():
             except AttributeError:
                 pass
 
-            with open(fileName,'a') as f:
+            with open(self.tempFile,'a') as f:
                 f.writelines(r)
-
-        os.system("less {}".format(fileName))
-        os.system("rm {}".format(fileName))

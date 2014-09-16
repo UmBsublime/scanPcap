@@ -1,17 +1,15 @@
 import dpkt
-import socket
-import os
 
-class analyzeDns():
+from helper import ipDecode
+from protoParser import ProtoParser
+
+class ParseDns(ProtoParser):
 
     def __init__(self, ethList):
-
         self.ethList = ethList
-        pass
+        ProtoParser.__init__(self, '.dns.tmp')
 
-
-    def analyze(self):
-        tempFile = '.dns.tmp'
+    def prepOut(self):
         for eth in self.ethList:
             c = ''
             if eth.type != 2048:
@@ -38,14 +36,8 @@ class analyzeDns():
             c = self.formatDns(dns)
 
 
-            with open(tempFile,'a') as f:
+            with open(self.tempFile,'a') as f:
                 f.writelines(c)
-
-
-        os.system("less {}".format(tempFile))
-        os.system('rm {}'.format(tempFile))
-
-
 
     def formatDns(self, dns):
         c =''
@@ -72,7 +64,7 @@ class analyzeDns():
                         if answer.name not in c:
                             c += "| A RECORD     {:<36}|\n".format('')
                             c += "| Domain Name: {:<36}|\n".format(answer.name)
-                        c += "| IP Address:  {:<36}|\n".format(socket.inet_ntoa(answer.rdata))
+                        c += "| IP Address:  {:<36}|\n".format(ipDecode(answer.rdata))
             except:
                 pass
                 #continue
