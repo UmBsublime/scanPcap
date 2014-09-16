@@ -217,7 +217,7 @@ class scan():
 
     def printTotals(self):
         # Print packet totals
-
+        print (TH_ACK, TH_CWR, TH_ECE, TH_FIN, TH_PUSH, TH_RST, TH_SYN, TH_URG)
         print ('|{:40}|'.format('File: ' + self.filename))
         print ('|{:40}|'.format('Start Time: ' + self.startTime[1]))
         print ('|{:40}|'.format('End Time:   ' + self.endTime[1]))
@@ -255,26 +255,6 @@ class scan():
                                    self.telnetcounter+ \
                                    self.whoiscounter+ \
                                    self.rsynccounter)
-
-
-    def printPacketPercentage(self):
-        # Print packet percentage
-
-        print("ARP     {:>5.0f}  {:>6.2f}%".format(self.arpcounter, self.getPercentage(self.arpcounter)))
-        print("HTTP    {:>5.0f}  {:>6.2f}%".format(self.httpcounter, self.getPercentage(self.httpcounter)))
-        print("HTTPS   {:>5.0f}  {:>6.2f}%".format(self.httpscounter, self.getPercentage(self.httpscounter)))
-        print("SMTP    {:>5.0f}  {:>6.2f}%".format(self.smtpcounter, self.getPercentage(self.smtpcounter)))
-        print("FTP     {:>5.0f}  {:>6.2f}%".format(self.ftpcounter, self.getPercentage(self.ftpcounter)))
-        print("SSH     {:>5.0f}  {:>6.2f}%".format(self.sshcounter, self.getPercentage(self.sshcounter)))
-        print("DHCP    {:>5.0f}  {:>6.2f}%".format(self.dhcpcounter, self.getPercentage(self.dhcpcounter)))
-        print("NTP     {:>5.0f}  {:>6.2f}%".format(self.ntpcounter, self.getPercentage(self.ntpcounter)))
-        print("IPV6    {:>5.0f}  {:>6.2f}%".format(self.ipv6counter, self.getPercentage(self.ipv6counter)))
-        print("telnet  {:>5.0f}  {:>6.2f}%".format(self.telnetcounter, self.getPercentage(self.telnetcounter)))
-        print("whois   {:>5.0f}  {:>6.2f}%".format(self.whoiscounter, self.getPercentage(self.whoiscounter)))
-        print("rsync   {:>5.0f}  {:>6.2f}%".format(self.rsynccounter, self.getPercentage(self.rsynccounter)))
-        print("other   {:>5.0f}  {:>6.2f}%".format(self.other, self.getPercentage(self.other)))
-        print("total   {:>5.0f}  {:>6.2f}%".format(self.counter, self.getPercentage(self.counter)))
-        print("--------------------------------------------------------------")
 
 
     def printSubnets(self, subMask):
@@ -326,7 +306,7 @@ if __name__ =="__main__":
 
 
 
-    print (TH_ACK, TH_CWR, TH_ECE, TH_FIN, TH_PUSH, TH_RST, TH_SYN, TH_URG)
+
     test = scan(sys.argv[1])
 
     test.printTotals()
