@@ -48,59 +48,57 @@ def setArgs():
 
     return options
 
-def console(capture, args):
+def console(c, args):
+
     commandLine = False
+
     if args.pUrl:
-        capture.urls.prepOut()
-        capture.urls.out()
-        capture.urls.cleanUp()
+        c.urls.prepOut()
+        c.urls.out()
+        c.urls.cleanUp()
         commandLine = True
 
     if args.pHttp:
-        if args.verbose:
-            capture.http.prepOut(vv=True)
-            capture.http.out()
-        else:
-            capture.http.prepOut(v=True)
-            capture.http.out()
-        capture.http.cleanUp()
+        c.http.prepOut(v=True, vv=args.verbose)
+        c.http.out()
+        c.http.cleanUp()
         commandLine = True
 
     if args.pDns:
-        capture.dns.prepOut()
-        capture.dns.out()
-        capture.dns.cleanUp()
-        commandLine = True
-
-    if args.pStats:
-        capture.printTotals()
-        commandLine = True
-
-    if args.pConn:
-        if args.verbose:
-            capture.printConnections(v=True)
-        else:
-            capture.printConnections()
+        c.dns.prepOut()
+        c.dns.out()
+        c.dns.cleanUp()
         commandLine = True
 
     if args.pArp:
-        if args.verbose:
-            capture.arp.prepOut(True)
-            capture.arp.out()
-        else:
-            capture.arp.prepOut()
-            capture.arp.out()
-        capture.arp.cleanUp()
+        c.arp.prepOut(v=args.verbose)
+        c.arp.out()
+        c.arp.cleanUp()
         commandLine = True
 
     if args.pSubnet:
-        capture.printSubnets(24)
+        c.printSubnets(24)
         commandLine = True
 
+    if args.pStats:
+        c.printTotals()
+        commandLine = True
+
+    if args.pConn:
+        c.printConnections(v=args.verbose)
+        commandLine = True
 
     return commandLine
 
 def interactive(capture):
+
+    menu = [['1', 'Print Subnets'],
+            ['2', 'Print Connections'],
+            ['3', 'Print HTTP Requests'],
+            ['4', 'Print DNS'],
+            ['5', 'Print URLS'],
+            ['6', 'Print ARP'],
+            ['^C', 'Exit']]
 
     thread.start_new_thread(capture.http.prepOut,(True, True))
     thread.start_new_thread(capture.arp.prepOut, (True,))
@@ -115,13 +113,8 @@ def interactive(capture):
             print('|{:-<40}|'.format(''))
             print('|{:<40}|'.format(__file__.split('/')[-1] + ' v.' + version))
             capture.printTotals()
-            print('1. Print URLS')
-            print('2. Print HTTP Requests')
-            print('3. Print Connections')
-            print('4. Subnets')
-            print('5. DNS')
-            print('6. ARP')
-            print('^C Quit')
+            for e in menu:
+                print('{}. {}'.format(e[0], e[1]))
 
             choice = input('\nChoice: ')
 
@@ -129,7 +122,6 @@ def interactive(capture):
             if choice is 1:
                 capture.urls.out()
             elif choice is 2:
-                #http.join()
                 capture.http.out()
             elif choice is 3:
                 capture.printConnections(v=True)
@@ -140,6 +132,7 @@ def interactive(capture):
                 capture.dns.out()
             elif choice is 6:
                 capture.arp.out()
+
     except KeyboardInterrupt:
         print
         exit()

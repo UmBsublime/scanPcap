@@ -272,7 +272,7 @@ class scan():
                                    self.rsynccounter)
 
 
-    def printSubnets(self, subMask):
+    def printSubnets(self, subMask=24):
         # Print addresses
 
         import string
