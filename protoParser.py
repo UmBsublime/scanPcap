@@ -11,8 +11,10 @@ class ProtoParser():
         raise NotImplementedError
 
     def out(self):
-        os.system("less {}".format(self.tempFile))
-
+        if os.path.isfile(self.tempFile):
+            os.system("less {}".format(self.tempFile))
+        else:
+            raise Exception
 
     def cleanUp(self):
         if os.path.isfile(self.tempFile):

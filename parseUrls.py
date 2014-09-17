@@ -12,30 +12,32 @@ class ParseUrls(ProtoParser):
     def prepOut(self, v=False):
 
         for tcp in self.tcpList:
-            u = ''
+
             try:
-                if tcp.dport == 80 and len(tcp.data) > 0:
-                    try:
-                        http = dpkt.http.Request(tcp.data)
-                        host = http.headers['host']
-
-                        if host.startswith('www'):
-                            if v:
-                                #HEADERS
-                                u += '\n{:-<18}|\n'.format('HEADERS')
-                                for key, value in http.headers.items():
-                                    u += '{:<18}: {}\n'.format(key, value)
-                            #URL
-                            u += '{:<18}: {}\n'.format('URL',host, http.uri)
-
-                    except dpkt.dpkt.UnpackError.InvalidHeader as e:
-                        print ("I/O error({}): ".format(e))
-                        print(len(tcp.data))
-                        print(tcp.data)
-                        pass
+                p = tcp.dport
             except AttributeError:
-                pass
+                continue
+
+            if p == 80 and len(tcp.data) > 0:
+
+                try:
+                    http = dpkt.http.Request(tcp.data)
+                    host = http.headers['host']
+
+                except dpkt.dpkt.UnpackError.InvalidHeader as e:
+                    continue
+
+                u = ''
+                if host.startswith('www'):
+                    if v:
+                        #HEADERS
+                        u += '\n{:-<18}|\n'.format('HEADERS')
+                        for key, value in http.headers.items():
+                            u += '{:<18}: {}\n'.format(key, value)
+                    #URL
+                    u += '{:<18}: {}\n'.format('URL',host, http.uri)
 
 
-            with open(self.tempFile,'a') as f:
-                f.writelines(u)
+
+                with open(self.tempFile,'a') as f:
+                    f.writelines(u)
