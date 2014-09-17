@@ -49,7 +49,6 @@ class ParseDns(ProtoParser):
                     c += '| Name:        {:<36}|\n'.format(qname.name)
             except:
                 pass
-                #continue
         elif dns.qr == dpkt.dns.DNS_R:
             #reply
             try:
@@ -62,7 +61,8 @@ class ParseDns(ProtoParser):
                             c += "| A RECORD     {:<36}|\n".format('')
                             c += "| Domain Name: {:<36}|\n".format(answer.name)
                         c += "| IP Address:  {:<36}|\n".format(ipDecode(answer.rdata))
-            except:
+            except Exception as e:
+                print 'WTF: {}'.format(e)
                 pass
 
         # remove empty responses

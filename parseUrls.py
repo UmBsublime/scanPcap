@@ -24,8 +24,11 @@ class ParseUrls(ProtoParser):
                     http = dpkt.http.Request(tcp.data)
                     host = http.headers['host']
 
-                except dpkt.dpkt.UnpackError.InvalidHeader as e:
+                except dpkt.dpkt.UnpackError as e:         # ABSOLUTELY need to fix this
+                    print ("[Known Bug] I/O error({}): ".format(e))
                     continue
+                    #print(len(tcp.data))
+                    #print(tcp.data)
 
                 u = ''
                 if host.startswith('www'):
