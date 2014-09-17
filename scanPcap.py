@@ -48,80 +48,73 @@ def setArgs():
 
     return options
 
-
-def main():
-
-    args = setArgs()
+def console(capture, args):
     commandLine = False
-    print('\n--> ANALYZING CAPTURE . . .\n')
-
-    test = analyze.scan(options.filename)
-
     if args.pUrl:
-        test.urls.prepOut()
-        test.urls.out()
-        test.urls.cleanUp()
+        capture.urls.prepOut()
+        capture.urls.out()
+        capture.urls.cleanUp()
         commandLine = True
 
     if args.pHttp:
         if args.verbose:
-            test.http.prepOut(vv=True)
-            test.http.out()
+            capture.http.prepOut(vv=True)
+            capture.http.out()
         else:
-            test.http.prepOut(v=True)
-            test.http.out()
-        test.http.cleanUp()
+            capture.http.prepOut(v=True)
+            capture.http.out()
+        capture.http.cleanUp()
         commandLine = True
 
     if args.pDns:
-        test.dns.prepOut()
-        test.dns.out()
-        test.dns.cleanUp()
+        capture.dns.prepOut()
+        capture.dns.out()
+        capture.dns.cleanUp()
         commandLine = True
 
     if args.pStats:
-        test.printTotals()
+        capture.printTotals()
         commandLine = True
 
     if args.pConn:
         if args.verbose:
-            test.printConnections(v=True)
+            capture.printConnections(v=True)
         else:
-            test.printConnections()
+            capture.printConnections()
         commandLine = True
 
     if args.pArp:
         if args.verbose:
-            test.arp.prepOut(True)
-            test.arp.out()
+            capture.arp.prepOut(True)
+            capture.arp.out()
         else:
-            test.arp.prepOut()
-            test.arp.out()
-        test.arp.cleanUp()
+            capture.arp.prepOut()
+            capture.arp.out()
+        capture.arp.cleanUp()
         commandLine = True
 
     if args.pSubnet:
-        test.printSubnets(24)
+        capture.printSubnets(24)
         commandLine = True
 
-    # if run with command line arguments quit after showing results
-    if commandLine:
-        return 
 
-    test.http.prepOut(vv=True)
-    test.arp.prepOut(True)
-    test.dns.prepOut()
-    test.urls.prepOut()
+    return commandLine
+
+def interactive(capture):
+
+    capture.http.prepOut(vv=True)
+    capture.arp.prepOut(True)
+    capture.dns.prepOut()
+    capture.urls.prepOut()
 
     os.system('clear')
-
 
     try:
         while True:
             os.system('clear')
             print('|{:-<40}|'.format(''))
             print('|{:<40}|'.format(__file__.split('/')[-1] + ' v.' + version))
-            test.printTotals()
+            capture.printTotals()
             print('1. Print URLS')
             print('2. Print HTTP Requests')
             print('3. Print Connections')
@@ -134,28 +127,42 @@ def main():
 
             # Make everything verbose when running interactively
             if choice is 1:
-                test.urls.out()
+                capture.urls.out()
             elif choice is 2:
-                test.urls.out()
+                capture.urls.out()
             elif choice is 3:
-                test.printConnections(v=True)
+                capture.printConnections(v=True)
             elif choice is 4:
-                test.printSubnets(24)
+                capture.printSubnets(24)
                 raw_input('Press any key to continue')
             elif choice is 5:
-                test.dns.out()
+                capture.dns.out()
             elif choice is 6:
-                test.arp.out()
+                capture.arp.out()
     except KeyboardInterrupt:
         print
         exit()
 
     finally:
         # Clean up
-        test.urls.cleanUp()
-        test.urls.cleanUp()
-        test.dns.cleanUp()
-        test.arp.cleanUp()
+        capture.urls.cleanUp()
+        capture.urls.cleanUp()
+        capture.dns.cleanUp()
+        capture.arp.cleanUp()
+
+
+
+def main():
+
+    print('\n--> ANALYZING CAPTURE . . .\n')
+
+    args = setArgs()
+    capture = analyze.scan(options.filename)
+
+    if not console(capture, args):
+        interactive(capture)
+
+
 
 
 if __name__ == '__main__':

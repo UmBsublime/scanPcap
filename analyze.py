@@ -5,7 +5,7 @@ import socket
 import sys
 import os
 
-from dpkt.tcp import TH_ACK, TH_CWR, TH_ECE, TH_FIN, TH_PUSH, TH_RST, TH_SYN, TH_URG
+from dpkt.tcp import TH_ACK,TH_FIN, TH_PUSH, TH_RST, TH_SYN
 
 from functools import wraps
 from commands import getoutput
@@ -66,17 +66,11 @@ class scan():
         self.tcpPacketList = []
         self.udpPacketList = []
 
-
-        (16, 1, 8, 4, 2)
-
-        print (TH_ACK, TH_FIN, TH_PUSH, TH_RST, TH_SYN )
-
-
-        self.tcpType = [[1, 'FIN', 0],
-                        [2, 'SYN', 0],
-                        [4, 'RST', 0],
-                        [8, 'PUSH', 0],
-                        [16, 'ACK', 0]]
+        self.tcpType = [[TH_FIN, 'FIN', 0],    #1
+                        [TH_SYN, 'SYN', 0],    #2
+                        [TH_RST, 'RST', 0],    #4
+                        [TH_PUSH, 'PUSH', 0],  #8
+                        [TH_ACK, 'ACK', 0]]    #16
 
 
         self.subnets = {}
@@ -236,14 +230,13 @@ class scan():
     def printTotals(self):
         # Print packet totals
 
-        print (TH_ACK, TH_FIN, TH_PUSH, TH_RST, TH_SYN )
-        print self.tcpType
-        print ('|{:40}|'.format('File: ' + self.filename))
-        print ('|{:40}|'.format('Start Time: ' + self.startTime[1]))
-        print ('|{:40}|'.format('End Time:   ' + self.endTime[1]))
-        print ('|{:40}|'.format('Duration:   ' + str(self.timeDelta)))
+        print("|{:-<40}|".format(''))
+        print ('|{:40}|'.format(' File: ' + self.filename))
+        print ('|{:40}|'.format(' Start Time: ' + self.startTime[1]))
+        print ('|{:40}|'.format(' End Time:   ' + self.endTime[1]))
+        print ('|{:40}|'.format(' Duration:   ' + str(self.timeDelta)))
         for flag in self.tcpType:
-            print ('|{:40}|'.format('{:<5}: {}'.format(flag[1], flag[2])))
+            print ('|{:40}|'.format(' {:<5}: {}'.format(flag[1], flag[2])))
         print("|{:-<40}|".format(''))
         print("| Ethernet     {:>8}  {:>6.2f}%  |".format(self.counter, self.getPercentage(self.counter)))
         print("|   NON-IP     {:>8}  {:>6.2f}%  |".format(self.nonipcounter, self.getPercentage(self.nonipcounter)))
