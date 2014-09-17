@@ -120,16 +120,17 @@ def interactive(capture):
 
             # Make everything verbose when running interactively
             if choice is 1:
-                capture.urls.out()
-            elif choice is 2:
-                capture.http.out()
-            elif choice is 3:
-                capture.printConnections(v=True)
-            elif choice is 4:
                 capture.printSubnets(24)
                 raw_input('Press any key to continue')
-            elif choice is 5:
+            elif choice is 2:
+                capture.printConnections(v=True)
+            elif choice is 3:
+                capture.http.out()
+            elif choice is 4:
                 capture.dns.out()
+            elif choice is 5:
+                capture.urls.out()
+                
             elif choice is 6:
                 capture.arp.out()
 
