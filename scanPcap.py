@@ -2,12 +2,12 @@
 
 import os
 import analyze
-
+import thread
 
 from optparse import OptionParser
 
 
-version = '0.0.2'
+version = '0.0.3'
 
 def setArgs():
     global options
@@ -102,10 +102,10 @@ def console(capture, args):
 
 def interactive(capture):
 
-    capture.http.prepOut(vv=True)
-    capture.arp.prepOut(True)
-    capture.dns.prepOut()
-    capture.urls.prepOut()
+    thread.start_new_thread(capture.http.prepOut,(True, True))
+    thread.start_new_thread(capture.arp.prepOut, (True,))
+    thread.start_new_thread(capture.dns.prepOut, ())
+    thread.start_new_thread(capture.urls.prepOut, ())
 
     os.system('clear')
 
@@ -129,7 +129,8 @@ def interactive(capture):
             if choice is 1:
                 capture.urls.out()
             elif choice is 2:
-                capture.urls.out()
+                #http.join()
+                capture.http.out()
             elif choice is 3:
                 capture.printConnections(v=True)
             elif choice is 4:
@@ -145,7 +146,7 @@ def interactive(capture):
 
     finally:
         # Clean up
-        capture.urls.cleanUp()
+        capture.http.cleanUp()
         capture.urls.cleanUp()
         capture.dns.cleanUp()
         capture.arp.cleanUp()
