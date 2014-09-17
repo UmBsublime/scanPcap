@@ -12,8 +12,11 @@ class ProtoParser():
 
     def out(self):
         os.system("less {}".format(self.tempFile))
-        os.system("rm {}".format(self.tempFile))
 
+
+    def cleanUp(self):
+        if os.path.isfile(self.tempFile):
+            os.system("rm {}".format(self.tempFile))
 
 def main():
     pass
