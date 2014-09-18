@@ -12,10 +12,10 @@ from commands import getoutput
 
 from helper import *
 
-import parseHttp as http
-import parseDns as dns
-import parseArp as arp
-import parseUrls as urls
+import parser.parseHttp as http
+import parser.parseDns as dns
+import parser.parseArp as arp
+import parser.parseUrls as urls
 
 def cache(func):
     saved = {}
