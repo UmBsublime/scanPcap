@@ -1,16 +1,18 @@
 import dpkt
 
-from protoParser import ProtoParser
+from parser.protoParser import ProtoParser
 
 class ParseHttp(ProtoParser):
 
-    def __init__(self, tcpList):
+    def __init__(self, tcpList, v=False, vv=False):
         self.tcpList = tcpList
+        self.v = v
+        self.vv =vv
         ProtoParser.__init__(self, '.http.tmp')
 
-    def prepOut(self, v=False, vv=False):
-        if vv:
-            v = True
+    def prepOut(self):
+        if self.vv:
+            self.v = True
         for tcp in self.tcpList:
 
 
@@ -31,9 +33,9 @@ class ParseHttp(ProtoParser):
 
                 r = ''
                 r += '\n{:-<18}|\n{:<18}:\n'.format('','HTTP REQUEST')
-                if v:
+                if self.v:
                     r += '{:<18}: {}\n'.format('PACKET LENGTH', len(tcp.data))
-                    if vv:
+                    if self.vv:
                         r +='{:<18}: {}\n'.format('VERSION', http.version)
                         r += '{:<18}: {}\n'.format('METHOD',http.method)
                         r += '{:-<18}|\n'.format('HEADERS')
@@ -58,3 +60,6 @@ class ParseHttp(ProtoParser):
 
                 with open(self.tempFile,'a') as f:
                     f.writelines(r)
+
+        self.tcpList = None
+        self.preped = True

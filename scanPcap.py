@@ -6,6 +6,10 @@ import thread
 
 from optparse import OptionParser
 
+import parser.parseHttp as http
+import parser.parseDns as dns
+import parser.parseArp as arp
+import parser.parseUrls as urls
 
 version = '0.0.3'
 
@@ -48,32 +52,30 @@ def setArgs():
 
     return options
 
-def console(c, args):
+def console(args, c):
 
+    #if True in args.values():
+    #    return True
     commandLine = False
 
     if args.pUrl:
-        c.urls.prepOut()
-        c.urls.out()
-        c.urls.cleanUp()
+        u = urls.ParseUrls(c.tcpPacketList)
+        u.out(rmTemp=True)
         commandLine = True
 
     if args.pHttp:
-        c.http.prepOut(v=True, vv=args.verbose)
-        c.http.out()
-        c.http.cleanUp()
+        h = http.ParseHttp(c.tcpPacketList, v=True, vv=args.verbose)
+        h.out(rmTemp=True)
         commandLine = True
 
     if args.pDns:
-        c.dns.prepOut()
-        c.dns.out()
-        c.dns.cleanUp()
+        d = dns.ParseDns(c.ethPacketList)
+        d.out(rmTemp=True)
         commandLine = True
 
     if args.pArp:
-        c.arp.prepOut(v=args.verbose)
-        c.arp.out()
-        c.arp.cleanUp()
+        a = arp.ParseArp(c.arpPacketList, v=args.verbose)
+        a.out(rmTemp=True)
         commandLine = True
 
     if args.pSubnet:
@@ -100,10 +102,15 @@ def interactive(capture):
             ['6', 'Print ARP'],
             ['^C', 'Exit']]
 
-    thread.start_new_thread(capture.http.prepOut,(True, True))
-    thread.start_new_thread(capture.arp.prepOut, (True,))
-    thread.start_new_thread(capture.dns.prepOut, ())
-    thread.start_new_thread(capture.urls.prepOut, ())
+    u = urls.ParseUrls(capture.tcpPacketList)
+    h = http.ParseHttp(capture.tcpPacketList, vv=True)
+    d = dns.ParseDns(capture.ethPacketList)
+    a = arp.ParseArp(capture.arpPacketList, v=True)
+
+    thread.start_new_thread(h.prepOut, ())
+    thread.start_new_thread(u.prepOut, ())
+    thread.start_new_thread(a.prepOut, ())
+    thread.start_new_thread(d.prepOut, ())
 
     os.system('clear')
 
@@ -125,14 +132,13 @@ def interactive(capture):
             elif choice is 2:
                 capture.printConnections(v=True)
             elif choice is 3:
-                capture.http.out()
+                h.out()
             elif choice is 4:
-                capture.dns.out()
+                d.out()
             elif choice is 5:
-                capture.urls.out()
-                
+                u.out()
             elif choice is 6:
-                capture.arp.out()
+                a.out()
 
     except KeyboardInterrupt:
         print
@@ -140,10 +146,10 @@ def interactive(capture):
 
     finally:
         # Clean up
-        capture.http.cleanUp()
-        capture.urls.cleanUp()
-        capture.dns.cleanUp()
-        capture.arp.cleanUp()
+        h.cleanUp()
+        d.cleanUp()
+        u.cleanUp()
+        a.cleanUp()
 
 
 
@@ -154,7 +160,9 @@ def main():
     args = setArgs()
     capture = analyze.scan(options.filename)
 
-    if not console(capture, args):
+
+
+    if not console(args, capture):
         interactive(capture)
 
 

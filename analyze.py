@@ -12,10 +12,7 @@ from commands import getoutput
 
 from helper import *
 
-import parser.parseHttp as http
-import parser.parseDns as dns
-import parser.parseArp as arp
-import parser.parseUrls as urls
+
 
 def cache(func):
     saved = {}
@@ -31,6 +28,10 @@ def cache(func):
 
 class scan():
 
+
+    def __new__(self, filename):
+        self.__init__(filename)
+        return self.parsers
     def __init__(self, filename):
 
 
@@ -77,12 +78,6 @@ class scan():
 
         # initialize counters
         self.setCounters()
-
-        # plug-in parsers
-        self.http = http.ParseHttp(self.tcpPacketList)
-        self.dns = dns.ParseDns(self.ethPacketList)
-        self.arp = arp.ParseArp(self.arpPacketList)
-        self.urls = urls.ParseUrls(self.tcpPacketList)
 
     def setCounters(self):
         # Packet processing loop

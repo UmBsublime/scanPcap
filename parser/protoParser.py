@@ -6,13 +6,21 @@ class ProtoParser():
 
     def __init__(self, tempFile):
         self.tempFile = tempFile
+        self.preped = False
 
     def prepOut(self):
         raise NotImplementedError
 
-    def out(self):
+    def out(self, rmTemp=False):
+
+        if not self.preped:
+            self.prepOut()
+
         if os.path.isfile(self.tempFile):
             os.system("less {}".format(self.tempFile))
+
+        if rmTemp:
+            self.cleanUp()
             
         #else:
         #    raise Exception

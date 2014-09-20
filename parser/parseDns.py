@@ -1,7 +1,7 @@
 import dpkt
 
 from helper import ipDecode
-from protoParser import ProtoParser
+from parser.protoParser import ProtoParser
 
 class ParseDns(ProtoParser):
 
@@ -35,6 +35,9 @@ class ParseDns(ProtoParser):
 
             with open(self.tempFile,'a') as f:
                 f.writelines(c)
+
+        self.ethList = None
+        self.preped = True
 
     def formatDns(self, dns):
 

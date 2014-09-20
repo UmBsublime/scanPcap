@@ -1,6 +1,6 @@
 import dpkt
 
-from protoParser import ProtoParser
+from parser.protoParser import ProtoParser
 
 
 class ParseUrls(ProtoParser):
@@ -44,3 +44,6 @@ class ParseUrls(ProtoParser):
 
                 with open(self.tempFile,'a') as f:
                     f.writelines(u)
+
+        self.tcpList = None
+        self.preped = True
