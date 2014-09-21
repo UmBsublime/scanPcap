@@ -60,22 +60,22 @@ def console(args, c):
 
     if args.pUrl:
         u = urls.ParseUrls(c.tcpPacketList)
-        u.out(rmTemp=True)
+        u.out(cleanUp=True)
         commandLine = True
 
     if args.pHttp:
         h = http.ParseHttp(c.tcpPacketList, v=True, vv=args.verbose)
-        h.out(rmTemp=True)
+        h.out(cleanUp=True)
         commandLine = True
 
     if args.pDns:
         d = dns.ParseDns(c.ethPacketList)
-        d.out(rmTemp=True)
+        d.out(cleanUp=True)
         commandLine = True
 
     if args.pArp:
         a = arp.ParseArp(c.arpPacketList, v=args.verbose)
-        a.out(rmTemp=True)
+        a.out(cleanUp=True)
         commandLine = True
 
     if args.pSubnet:
