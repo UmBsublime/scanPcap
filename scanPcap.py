@@ -13,6 +13,19 @@ import parser.parseUrls as urls
 
 version = '0.0.3'
 
+
+
+
+
+
+
+
+
+
+
+
+
+
 def setArgs():
     global options
     parser = OptionParser(usage = 'usage: %prog [-r FILE] arguments')
